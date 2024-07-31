@@ -1,40 +1,20 @@
-const http = require('http');
+const path = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-const server = http.createServer((req, res) => {
-    const url = req.url;
-    const method = req.method;
+const app = express();
 
-    if (url === '/') {
-        res.write('<html>');
-        res.write('<head><title>Main Page</title></head>');
-        res.write('<body><h1>Welcome to Node JS!</h1><form action="/create-user" method="POST"><input type="text" name="user" placeholder="username"><button type="submit">Create User</button></form></body>');
-        res.write('</html>');
-        return res.end();
-    };
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
 
-    if (url === '/create-user' && method === 'POST') {
-        const body = [];
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.static(path.join(__dirname, 'public')));
 
-        req.on('data', (chunk) => {
-            console.log(chunk, 'chunk');
-            body.push(chunk);
-        });
-        req.on('end', () => {
-            const parsedBody = Buffer.concat(body).toString();
-            const user = parsedBody.split('=')[1];
-            console.log(user, 'user');
-        });
-        res.statusCode = 302;
-        res.setHeader('Location', '/');
-        return res.end();
-    };
+app.use('/admin', adminRoutes);
+app.use(shopRoutes);
 
-    if (url === '/users') {
-        res.write('<html>');
-        res.write('<head><title>Main Page</title></head>');
-        res.write('<body><ul><li>User 1</li><li>User 2</li><li>User 3</li></ul></body>');
-        res.write('</html>');
-    }
-});
+app.use((req, res, next) => {
+    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+})
 
-server.listen(3000);
+app.listen(3000);
