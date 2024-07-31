@@ -6,8 +6,9 @@ const server = http.createServer((req, res) => {
     if (url === '/') {
         res.write('<html>');
         res.write('<head><title>Main Page</title></head>');
-        res.write('<body><h1>Welcome to Node JS!</h1></body>');
+        res.write('<body><h1>Welcome to Node JS!</h1><form action="/create-user" method="POST"><input type="text" name="create-user" placeholder="username"><button type="submit">Create User</button></form></body>');
         res.write('</html>');
+        return res.end();
     };
 
     if (url === '/users') {
