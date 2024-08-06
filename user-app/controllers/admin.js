@@ -20,7 +20,6 @@ exports.postAddProduct = (req, res, next) => {
 
 exports.getEditProduct = (req, res, next) => {
   const editMode = req.query.edit;
-
   if (!editMode) {
     return res.redirect('/');
   }
@@ -31,8 +30,9 @@ exports.getEditProduct = (req, res, next) => {
     }
     res.render('admin/edit-product', {
       pageTitle: 'Edit Product',
-      path: '/admin/add-product',
-      editing: editMode
+      path: '/admin/edit-product',
+      editing: editMode,
+      product: product
     });
   });
 };
@@ -43,7 +43,13 @@ exports.postEditProduct = (req, res, next) => {
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
-  const updatedProduct = new Product(prodId, updatedTitle, updatedImageUrl, updatedDesc, updatedPrice);
+  const updatedProduct = new Product(
+    prodId,
+    updatedTitle,
+    updatedImageUrl,
+    updatedDesc,
+    updatedPrice
+  );
   updatedProduct.save();
   res.redirect('/admin/products');
 };
